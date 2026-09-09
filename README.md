@@ -22,6 +22,25 @@ npm run dev
 
 Login: `ADMIN_USERNAME` / `ADMIN_PASSWORD` from `.env` (example: `admin` / `change-me`).
 
+## Deploy on Railway
+
+1. New Project → Deploy from GitHub (`TICKET_REVIEW`).
+2. **Add Postgres:** New → Database → PostgreSQL.
+3. Web service → **Variables** → add:
+
+| Key | Value |
+|-----|--------|
+| `DATABASE_URL` | Variable Reference → `${{Postgres.DATABASE_URL}}` (name may match your DB service) |
+| `DIRECT_URL` | Same as `DATABASE_URL` |
+| `AUTH_SECRET` | Generate / long random string |
+| `AUTH_TRUST_HOST` | `true` |
+| `ADMIN_USERNAME` | `admin` |
+| `ADMIN_PASSWORD` | your password |
+
+4. Redeploy. Login: `https://<service>.up.railway.app/en/login`
+
+If logs say `DATABASE_URL is required`, the web service is not linked to Postgres yet (step 2–3).
+
 ## Deploy on Vercel (recommended)
 
 SQLite does **not** work on Vercel. Use Postgres (Neon is free and easy):
