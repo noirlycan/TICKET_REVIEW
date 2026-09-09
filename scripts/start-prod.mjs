@@ -4,35 +4,71 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-// Railway / Neon / generic Postgres URL aliases
-if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL =
-    process.env.POSTGRES_URL ||
-    process.env.POSTGRESQL_URL ||
-    process.env.DATABASE_PRIVATE_URL ||
-    "";
+function firstEnv(...keys) {
+  for (const key of keys) {
+    const value = process.env[key];
+    if (value && String(value).trim()) return String(value).trim();
+  }
+  return "";
 }
 
-if (process.env.DATABASE_URL && !process.env.DIRECT_URL) {
+function fromPgParts() {
+  const host = firstEnv("PGHOST", "POSTGRES_HOST");
+  const port = firstEnv("PGPORT", "POSTGRES_PORT") || "5432";
+  const user = firstEnv("PGUSER", "POSTGRES_USER");
+  const password = firstEnv("PGPASSWORD", "POSTGRES_PASSWORD");
+  const database = firstEnv("PGDATABASE", "POSTGRES_DB", "POSTGRES_DATABASE");
+  if (!host || !user || !password || !database) return "";
+  const enc = encodeURIComponent;
+  return `postgresql://${enc(user)}:${enc(password)}@${host}:${port}/${database}`;
+}
+
+function resolveDatabaseUrl() {
+  return (
+    firstEnv(
+      "DATABASE_URL",
+      "POSTGRES_URL",
+      "POSTGRESQL_URL",
+      "DATABASE_PRIVATE_URL",
+      "DATABASE_PUBLIC_URL",
+    ) || fromPgParts()
+  );
+}
+
+process.env.DATABASE_URL = resolveDatabaseUrl();
+
+if (process.env.DATABASE_URL && !firstEnv("DIRECT_URL")) {
   process.env.DIRECT_URL = process.env.DATABASE_URL;
 }
 
 if (!process.env.DATABASE_URL) {
+  const related = Object.keys(process.env)
+    .filter((k) => /^(DATABASE|POSTGRES|PG)/i.test(k))
+    .sort();
   console.error(`
-[start-prod] DATABASE_URL is missing.
+[start-prod] DATABASE_URL is missing on this service.
 
-On Railway:
-  1. Project → New → Database → PostgreSQL
-  2. Open your web service → Variables
-  3. Add variable DATABASE_URL = \${{ Postgres.DATABASE_URL }}
-     (use Variable Reference to the Postgres service)
-  4. Also set DIRECT_URL to the same reference (or omit; start script copies it)
-  5. Set AUTH_SECRET, AUTH_TRUST_HOST=true, ADMIN_USERNAME, ADMIN_PASSWORD
-  6. Redeploy
+Related env keys present: ${related.length ? related.join(", ") : "(none)"}
+
+Fix on Railway (Web service → Variables):
+  1. Ensure a PostgreSQL service exists in the SAME project.
+  2. Add Variable → "Add Reference" (not raw text):
+       DATABASE_URL  →  <PostgresService>.DATABASE_URL
+       DIRECT_URL    →  <PostgresService>.DATABASE_URL
+  3. Also set:
+       AUTH_SECRET=<random>
+       AUTH_TRUST_HOST=true
+       ADMIN_USERNAME=admin
+       ADMIN_PASSWORD=<your-password>
+  4. Save → Deployments → Redeploy
+
+Service name in the reference must match your Postgres service name
+(e.g. Postgres, PostgreSQL, ticket-review-db).
 `);
   process.exit(1);
 }
 
+console.log("[start-prod] DATABASE_URL is set");
 console.log("[start-prod] Running migrate + seed + next start");
 
 function run(command, args) {
