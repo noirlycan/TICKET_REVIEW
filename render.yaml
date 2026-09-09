@@ -5,13 +5,13 @@ services:
     plan: free
     region: singapore
     buildCommand: npm install && npx prisma generate && npm run build
-    startCommand: npx prisma migrate deploy && npx tsx prisma/seed.ts && npm start
+    startCommand: npm run start:prod
     healthCheckPath: /en/login
     envVars:
       - key: NODE_VERSION
         value: "22"
       - key: DATABASE_URL
-        value: file:./prod.db
+        value: file:./prisma/data.db
       - key: AUTH_SECRET
         generateValue: true
       - key: AUTH_TRUST_HOST
