@@ -3,22 +3,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const dbFile = path.join(root, "prisma", "data.db");
 
-// Always use one absolute SQLite file so migrate/seed/app share the same DB.
-const current = process.env.DATABASE_URL ?? "";
-if (
-  !current ||
-  current.startsWith("file:./") ||
-  current.startsWith("file:prisma/") ||
-  current === "file:./prod.db" ||
-  current === "file:./dev.db"
-) {
-  process.env.DATABASE_URL = `file:${dbFile}`;
+if (!process.env.DATABASE_URL) {
+  console.error("[start-prod] DATABASE_URL is required (Postgres connection string)");
+  process.exit(1);
 }
 
-console.log(`[start-prod] cwd=${root}`);
-console.log(`[start-prod] DATABASE_URL=${process.env.DATABASE_URL}`);
+console.log("[start-prod] Running migrate + seed + next start");
 
 function run(command, args) {
   console.log(`[start-prod] $ ${command} ${args.join(" ")}`);

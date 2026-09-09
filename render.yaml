@@ -11,7 +11,13 @@ services:
       - key: NODE_VERSION
         value: "22"
       - key: DATABASE_URL
-        value: file:./prisma/data.db
+        fromDatabase:
+          name: ticket-review-db
+          property: connectionString
+      - key: DIRECT_URL
+        fromDatabase:
+          name: ticket-review-db
+          property: connectionString
       - key: AUTH_SECRET
         generateValue: true
       - key: AUTH_TRUST_HOST
@@ -20,3 +26,8 @@ services:
         value: admin
       - key: ADMIN_PASSWORD
         sync: false
+
+databases:
+  - name: ticket-review-db
+    plan: free
+    region: singapore

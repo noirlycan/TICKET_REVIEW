@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum TaskStatus {
@@ -24,10 +25,10 @@ enum ReviewEventType {
 }
 
 model User {
-  id           String     @id @default(cuid())
-  username     String     @unique
+  id           String        @id @default(cuid())
+  username     String        @unique
   passwordHash String
-  createdAt    DateTime   @default(now())
+  createdAt    DateTime      @default(now())
   tasks        Task[]
   comments     TaskComment[]
   apiKeys      ApiKey[]

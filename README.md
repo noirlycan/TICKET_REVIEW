@@ -5,46 +5,48 @@ Web hub for MR review tasks. Humans create tasks and decide when to allow approv
 ## Stack
 
 - Next.js (App Router) + TypeScript
-- Prisma + SQLite
+- Prisma + **PostgreSQL**
 - Auth.js (credentials)
 - next-intl (English / Vietnamese)
 
-## Setup
+## Local setup
 
 ```bash
 cp .env.example .env
+docker compose up -d          # Postgres on localhost:5432
 npm install
-npx prisma migrate dev --name init
+npx prisma migrate dev
 npm run db:seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Default admin comes from `.env`:
+Login: `ADMIN_USERNAME` / `ADMIN_PASSWORD` from `.env` (example: `admin` / `change-me`).
 
-- `ADMIN_USERNAME` (default `admin`)
-- `ADMIN_PASSWORD` (default `change-me` in example; set a strong value)
+## Deploy on Vercel (recommended)
 
-## Deploy on Render
+SQLite does **not** work on Vercel. Use Postgres (Neon is free and easy):
 
-1. Push this repo to GitHub/GitLab.
-2. Open [New Web Service](https://dashboard.render.com/web/new) and connect the repo.
-3. Settings (or use Blueprint `render.yaml`):
-   - **Runtime:** Node
-   - **Build Command:** `npm install && npx prisma generate && npm run build`
-   - **Start Command:** `npx prisma migrate deploy && npx tsx prisma/seed.ts && npm start`
-4. Environment variables:
+1. Create a free DB at [neon.tech](https://neon.tech) (or Vercel Storage → Postgres).
+2. Copy **pooled** connection string → `DATABASE_URL`
+3. Copy **direct / unpooled** connection string → `DIRECT_URL`
+4. In Vercel project → Settings → Environment Variables:
 
 | Key | Value |
 |-----|--------|
-| `DATABASE_URL` | `file:./prod.db` |
-| `AUTH_SECRET` | random long string (Generate) |
+| `DATABASE_URL` | Neon pooled URL |
+| `DIRECT_URL` | Neon direct URL |
+| `AUTH_SECRET` | long random string |
 | `AUTH_TRUST_HOST` | `true` |
 | `ADMIN_USERNAME` | `admin` |
 | `ADMIN_PASSWORD` | your password |
 
-5. Deploy. App URL: `https://<service>.onrender.com` (login at `/en/login`).
+5. Redeploy. Build runs `migrate deploy` + seed + `next build` via `vercel.json`.
 
-**Note:** Free plan has ephemeral disk — SQLite data resets on redeploy. Seed recreates the admin user. For persistent data, add a [persistent disk](https://render.com/docs/disks) (paid) mounted e.g. at `/var/data` and set `DATABASE_URL=file:/var/data/prod.db`.
+App: `https://<project>.vercel.app/en/login`
+
+## Deploy on Render
+
+Use Blueprint `render.yaml` (web + Postgres), or set `DATABASE_URL` / `DIRECT_URL` to a Render Postgres instance (same value for both is fine). Start command: `npm start` (migrate + seed + next).
 
 ## Human flow
 
@@ -58,27 +60,27 @@ Open [http://localhost:3000](http://localhost:3000). Default admin comes from `.
 
 ## Review system API (`X-API-Key`)
 
-Base URL: `http://localhost:3000/api/v1`
+Base URL: `https://<your-domain>/api/v1`
 
 ### List tasks
 
 ```bash
 curl -s -H "X-API-Key: YOUR_KEY" \
-  "http://localhost:3000/api/v1/tasks?status=pending,needs_revision,allow_approve"
+  "https://<your-domain>/api/v1/tasks?status=pending,needs_revision,allow_approve"
 ```
 
 ### Get task detail (comments + events)
 
 ```bash
 curl -s -H "X-API-Key: YOUR_KEY" \
-  "http://localhost:3000/api/v1/tasks/TASK_ID"
+  "https://<your-domain>/api/v1/tasks/TASK_ID"
 ```
 
 ### Claim task (`pending` or `needs_revision` → `in_review`)
 
 ```bash
 curl -s -X POST -H "X-API-Key: YOUR_KEY" \
-  "http://localhost:3000/api/v1/tasks/TASK_ID/claim"
+  "https://<your-domain>/api/v1/tasks/TASK_ID/claim"
 ```
 
 ### Post review result → `reviewed`
@@ -87,7 +89,7 @@ curl -s -X POST -H "X-API-Key: YOUR_KEY" \
 curl -s -X POST -H "X-API-Key: YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{"summary":"Looks good","findings":[{"severity":"info","message":"No blockers"}]}' \
-  "http://localhost:3000/api/v1/tasks/TASK_ID/reviews"
+  "https://<your-domain>/api/v1/tasks/TASK_ID/reviews"
 ```
 
 ### Mark approved (only when status is `allow_approve`)
@@ -96,7 +98,7 @@ curl -s -X POST -H "X-API-Key: YOUR_KEY" \
 curl -s -X POST -H "X-API-Key: YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{"note":"Approved on GitLab"}' \
-  "http://localhost:3000/api/v1/tasks/TASK_ID/approved"
+  "https://<your-domain>/api/v1/tasks/TASK_ID/approved"
 ```
 
 ## Suggested review-system loop
