@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     serverActions: {
       allowedOrigins: [
         "localhost:3000",
+        "foodie-ssi.shop",
+        "www.foodie-ssi.shop",
         "*.up.railway.app",
         "*.vercel.app",
       ],
