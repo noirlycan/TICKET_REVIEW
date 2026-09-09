@@ -9,9 +9,17 @@ const intlMiddleware = createMiddleware(routing);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
+  const isServerAction =
+    req.method === "POST" &&
+    (req.headers.has("next-action") || req.headers.has("Next-Action"));
 
   if (pathname.startsWith("/api/")) {
     return NextResponse.next();
+  }
+
+  // Server Actions POST to the page URL; auth is enforced inside each action.
+  if (isServerAction) {
+    return intlMiddleware(req);
   }
 
   const localeMatch = pathname.match(/^\/(en|vi)(\/|$)/);

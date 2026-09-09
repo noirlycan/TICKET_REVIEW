@@ -18,7 +18,9 @@ export function ApiKeysClient({ keys }: { keys: ApiKeyRow[] }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  function onCreate(formData: FormData) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     setError(null);
     setRawKey(null);
     startTransition(async () => {
@@ -28,12 +30,13 @@ export function ApiKeysClient({ keys }: { keys: ApiKeyRow[] }) {
         return;
       }
       setRawKey(result.raw);
+      e.currentTarget.reset();
     });
   }
 
   return (
     <div className="space-y-4">
-      <form action={onCreate} className="flex flex-wrap items-end gap-2">
+      <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-2">
         <label className="space-y-1 text-sm">
           <span>{t("name")}</span>
           <input
