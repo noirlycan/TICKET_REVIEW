@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/db";
 import { StatusBadge } from "@/components/StatusBadge";
+import { ReviewEventCard } from "@/components/ReviewEventCard";
 import {
   addComment,
   allowApprove,
@@ -107,19 +108,14 @@ export default async function TaskDetailPage({ params }: Props) {
         {task.events.length === 0 ? (
           <p className="text-sm text-muted">{t("noEvents")}</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {task.events.map((event) => (
-              <li
-                key={event.id}
-                className="rounded border border-border bg-card p-3 text-sm"
-              >
-                <div className="mb-1 flex justify-between text-xs text-muted">
-                  <span className="font-medium uppercase">{event.type}</span>
-                  <span>{event.createdAt.toLocaleString()}</span>
-                </div>
-                <pre className="overflow-x-auto whitespace-pre-wrap font-mono text-xs">
-                  {prettyPayload(event.payload)}
-                </pre>
+              <li key={event.id}>
+                <ReviewEventCard
+                  type={event.type}
+                  payload={event.payload}
+                  createdAt={event.createdAt.toLocaleString()}
+                />
               </li>
             ))}
           </ul>
@@ -173,12 +169,4 @@ export default async function TaskDetailPage({ params }: Props) {
       </section>
     </div>
   );
-}
-
-function prettyPayload(payload: string) {
-  try {
-    return JSON.stringify(JSON.parse(payload), null, 2);
-  } catch {
-    return payload;
-  }
 }

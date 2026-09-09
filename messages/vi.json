@@ -45,6 +45,20 @@
     "noEvents": "Chưa có sự kiện review.",
     "noComments": "Chưa có bình luận."
   },
+  "events": {
+    "types": {
+      "review_result": "Kết quả review",
+      "approved": "Đã approve",
+      "status_note": "Ghi chú trạng thái"
+    },
+    "findingsCount": "{count} finding",
+    "noFindings": "Không có finding.",
+    "showDetails": "Xem chi tiết",
+    "hideDetails": "Thu gọn",
+    "findingFallback": "Finding #{n}",
+    "previousStatus": "Trạng thái trước",
+    "approvedDefault": "MR đã được hệ thống review approve."
+  },
   "status": {
     "pending": "Chờ xử lý",
     "in_review": "Đang review",

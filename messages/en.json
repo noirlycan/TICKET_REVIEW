@@ -45,6 +45,20 @@
     "noEvents": "No review events yet.",
     "noComments": "No comments yet."
   },
+  "events": {
+    "types": {
+      "review_result": "Review result",
+      "approved": "Approved",
+      "status_note": "Status note"
+    },
+    "findingsCount": "{count} finding(s)",
+    "noFindings": "No findings reported.",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "findingFallback": "Finding #{n}",
+    "previousStatus": "Previous status",
+    "approvedDefault": "Merge request approved by review system."
+  },
   "status": {
     "pending": "Pending",
     "in_review": "In review",
