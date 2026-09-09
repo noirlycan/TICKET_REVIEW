@@ -1,0 +1,75 @@
+{
+  "app": {
+    "title": "MR Task Review",
+    "navTasks": "Tasks",
+    "navApiKeys": "API Keys",
+    "logout": "Log out",
+    "language": "Language"
+  },
+  "login": {
+    "title": "Sign in",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in",
+    "error": "Invalid username or password"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "new": "New task",
+    "empty": "No tasks yet.",
+    "filterAll": "All",
+    "filterStatus": "Status",
+    "columns": {
+      "title": "Title",
+      "status": "Status",
+      "mr": "Merge request",
+      "updated": "Updated"
+    },
+    "createTitle": "Create task",
+    "fieldTitle": "Title",
+    "fieldDescription": "Description",
+    "fieldMrUrl": "MR URL",
+    "fieldMrIid": "MR IID (optional)",
+    "fieldProjectId": "Project ID (optional)",
+    "submitCreate": "Create",
+    "detail": "Task detail",
+    "comments": "Comments",
+    "addComment": "Add comment",
+    "commentPlaceholder": "Add feedback for another review scan…",
+    "submitComment": "Post comment",
+    "timeline": "Timeline",
+    "allowApprove": "Allow approve",
+    "cancel": "Cancel task",
+    "back": "Back to tasks",
+    "createdBy": "Created by",
+    "noEvents": "No review events yet.",
+    "noComments": "No comments yet."
+  },
+  "status": {
+    "pending": "Pending",
+    "in_review": "In review",
+    "reviewed": "Reviewed",
+    "needs_revision": "Needs revision",
+    "allow_approve": "Allow approve",
+    "approved": "Approved",
+    "cancelled": "Cancelled"
+  },
+  "apiKeys": {
+    "title": "API Keys",
+    "description": "Create API keys for the outbound review system. Send the key in the X-API-Key header.",
+    "name": "Name",
+    "create": "Create key",
+    "createdOnce": "Copy this key now. It will not be shown again.",
+    "prefix": "Prefix",
+    "createdAt": "Created",
+    "revoke": "Revoke",
+    "empty": "No API keys yet.",
+    "revoked": "Revoked",
+    "active": "Active"
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "error": "Something went wrong"
+  }
+}

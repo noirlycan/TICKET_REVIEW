@@ -1,0 +1,75 @@
+{
+  "app": {
+    "title": "MR Task Review",
+    "navTasks": "Công việc",
+    "navApiKeys": "API Key",
+    "logout": "Đăng xuất",
+    "language": "Ngôn ngữ"
+  },
+  "login": {
+    "title": "Đăng nhập",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "submit": "Đăng nhập",
+    "error": "Sai tên đăng nhập hoặc mật khẩu"
+  },
+  "tasks": {
+    "title": "Công việc",
+    "new": "Tạo task",
+    "empty": "Chưa có task nào.",
+    "filterAll": "Tất cả",
+    "filterStatus": "Trạng thái",
+    "columns": {
+      "title": "Tiêu đề",
+      "status": "Trạng thái",
+      "mr": "Merge request",
+      "updated": "Cập nhật"
+    },
+    "createTitle": "Tạo task",
+    "fieldTitle": "Tiêu đề",
+    "fieldDescription": "Mô tả",
+    "fieldMrUrl": "URL MR",
+    "fieldMrIid": "MR IID (tuỳ chọn)",
+    "fieldProjectId": "Project ID (tuỳ chọn)",
+    "submitCreate": "Tạo",
+    "detail": "Chi tiết task",
+    "comments": "Bình luận",
+    "addComment": "Thêm bình luận",
+    "commentPlaceholder": "Góp ý để hệ thống review scan lại…",
+    "submitComment": "Gửi bình luận",
+    "timeline": "Timeline",
+    "allowApprove": "Cho phép approve",
+    "cancel": "Huỷ task",
+    "back": "Quay lại danh sách",
+    "createdBy": "Tạo bởi",
+    "noEvents": "Chưa có sự kiện review.",
+    "noComments": "Chưa có bình luận."
+  },
+  "status": {
+    "pending": "Chờ xử lý",
+    "in_review": "Đang review",
+    "reviewed": "Đã review",
+    "needs_revision": "Cần chỉnh / scan lại",
+    "allow_approve": "Cho phép approve",
+    "approved": "Đã approve",
+    "cancelled": "Đã huỷ"
+  },
+  "apiKeys": {
+    "title": "API Key",
+    "description": "Tạo API key cho hệ thống review (outbound). Gửi key trong header X-API-Key.",
+    "name": "Tên",
+    "create": "Tạo key",
+    "createdOnce": "Hãy sao chép key ngay. Key sẽ không hiển thị lại.",
+    "prefix": "Prefix",
+    "createdAt": "Ngày tạo",
+    "revoke": "Thu hồi",
+    "empty": "Chưa có API key.",
+    "revoked": "Đã thu hồi",
+    "active": "Đang dùng"
+  },
+  "common": {
+    "loading": "Đang tải…",
+    "save": "Lưu",
+    "error": "Đã xảy ra lỗi"
+  }
+}
