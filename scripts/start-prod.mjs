@@ -1,8 +1,10 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { config as loadEnv } from "dotenv";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+loadEnv({ path: path.join(root, ".env") });
 
 function firstEnv(...keys) {
   for (const key of keys) {
