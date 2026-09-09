@@ -88,10 +88,45 @@ export function countBySeverity(findings: ReviewFinding[]) {
   return counts;
 }
 
-export const SEVERITY_ORDER = [
-  "critical",
-  "high",
-  "medium",
-  "low",
-  "info",
-] as const;
+export function formatReviewForCopy(
+  review: ReviewResultPayload,
+  meta?: { title?: string; mrUrl?: string; createdAt?: string },
+): string {
+  const lines: string[] = [];
+
+  if (meta?.title) lines.push(`# ${meta.title}`);
+  if (meta?.mrUrl) lines.push(`MR: ${meta.mrUrl}`);
+  if (meta?.createdAt) lines.push(`Reviewed at: ${meta.createdAt}`);
+  if (meta?.title || meta?.mrUrl || meta?.createdAt) lines.push("");
+
+  lines.push(`## Summary`);
+  lines.push(review.summary);
+  lines.push("");
+
+  if (review.findings.length === 0) {
+    lines.push("No findings.");
+    return lines.join("\n");
+  }
+
+  lines.push(`## Findings (${review.findings.length})`);
+  lines.push("");
+
+  review.findings.forEach((finding, index) => {
+    const severity = String(finding.severity || "info").toUpperCase();
+    const title =
+      finding.title || finding.message || `Finding #${index + 1}`;
+    lines.push(`### ${index + 1}. [${severity}] ${title}`);
+    if (finding.file) lines.push(`File: ${finding.file}`);
+    lines.push("");
+    if (finding.description) {
+      lines.push(finding.description.trim());
+    } else if (finding.message && finding.message !== title) {
+      lines.push(finding.message.trim());
+    }
+    lines.push("");
+    lines.push("---");
+    lines.push("");
+  });
+
+  return lines.join("\n").trim() + "\n";
+}

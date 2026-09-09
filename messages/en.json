@@ -57,7 +57,9 @@
     "hideDetails": "Hide details",
     "findingFallback": "Finding #{n}",
     "previousStatus": "Previous status",
-    "approvedDefault": "Merge request approved by review system."
+    "approvedDefault": "Merge request approved by review system.",
+    "copyReview": "Copy review",
+    "copied": "Copied!"
   },
   "status": {
     "pending": "Pending",

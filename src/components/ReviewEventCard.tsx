@@ -6,16 +6,20 @@ import { useTranslations } from "next-intl";
 import {
   asReviewResult,
   countBySeverity,
+  formatReviewForCopy,
   parseJsonPayload,
   SEVERITY_ORDER,
   type FindingSeverity,
   type ReviewFinding,
 } from "@/lib/review-payload";
+import { CopyReviewButton } from "@/components/CopyButton";
 
 type Props = {
   type: string;
   payload: string;
   createdAt: string;
+  taskTitle?: string;
+  mrUrl?: string;
 };
 
 const SEVERITY_CLASS: Record<string, string> = {
@@ -32,18 +36,32 @@ const TYPE_CLASS: Record<string, string> = {
   status_note: "bg-slate-50 text-slate-700 border-slate-200",
 };
 
-export function ReviewEventCard({ type, payload, createdAt }: Props) {
+export function ReviewEventCard({
+  type,
+  payload,
+  createdAt,
+  taskTitle,
+  mrUrl,
+}: Props) {
   const t = useTranslations("events");
   const parsed = useMemo(() => parseJsonPayload(payload), [payload]);
 
   if (type === "review_result") {
     const review = asReviewResult(parsed);
     if (review) {
+      const copyText = formatReviewForCopy(review, {
+        title: taskTitle,
+        mrUrl,
+        createdAt,
+      });
       return (
         <article className="overflow-hidden rounded-lg border border-border bg-card">
           <header className="flex flex-wrap items-start justify-between gap-2 border-b border-border bg-background/60 px-4 py-3">
-            <div className="space-y-1">
-              <TypeLabel type={type} label={t("types.review_result")} />
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <TypeLabel type={type} label={t("types.review_result")} />
+                <CopyReviewButton text={copyText} />
+              </div>
               <h3 className="text-base font-semibold leading-snug">
                 <ReactMarkdown
                   components={{

@@ -57,7 +57,9 @@
     "hideDetails": "Thu gọn",
     "findingFallback": "Finding #{n}",
     "previousStatus": "Trạng thái trước",
-    "approvedDefault": "MR đã được hệ thống review approve."
+    "approvedDefault": "MR đã được hệ thống review approve.",
+    "copyReview": "Copy review",
+    "copied": "Đã copy!"
   },
   "status": {
     "pending": "Chờ xử lý",

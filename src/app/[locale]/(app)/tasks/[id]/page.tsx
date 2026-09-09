@@ -116,6 +116,8 @@ export default async function TaskDetailPage({ params }: Props) {
                   type={event.type}
                   payload={event.payload}
                   createdAt={event.createdAt.toLocaleString()}
+                  taskTitle={task.title}
+                  mrUrl={task.mrUrl}
                 />
               </li>
             ))}
