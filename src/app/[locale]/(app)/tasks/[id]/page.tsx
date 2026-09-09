@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/db";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ReviewEventCard } from "@/components/ReviewEventCard";
+import { CommentBody } from "@/components/CommentBody";
 import {
   addComment,
   allowApprove,
@@ -137,7 +138,7 @@ export default async function TaskDetailPage({ params }: Props) {
                   <span>{comment.author.username}</span>
                   <span>{comment.createdAt.toLocaleString()}</span>
                 </div>
-                <p className="whitespace-pre-wrap">{comment.body}</p>
+                <CommentBody body={comment.body} />
               </li>
             ))}
           </ul>

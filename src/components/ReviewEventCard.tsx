@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import { useTranslations } from "next-intl";
 import {
@@ -45,7 +45,13 @@ export function ReviewEventCard({ type, payload, createdAt }: Props) {
             <div className="space-y-1">
               <TypeLabel type={type} label={t("types.review_result")} />
               <h3 className="text-base font-semibold leading-snug">
-                {review.summary}
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <span>{children}</span>,
+                  }}
+                >
+                  {review.summary}
+                </ReactMarkdown>
               </h3>
             </div>
             <time className="shrink-0 text-xs text-muted">{createdAt}</time>
@@ -81,7 +87,11 @@ export function ReviewEventCard({ type, payload, createdAt }: Props) {
         type={type}
         typeLabel={t("types.approved")}
         createdAt={createdAt}
-        body={note || t("approvedDefault")}
+        body={
+          <div className="prose-review text-sm">
+            <ReactMarkdown>{note || t("approvedDefault")}</ReactMarkdown>
+          </div>
+        }
       />
     );
   }
@@ -95,7 +105,11 @@ export function ReviewEventCard({ type, payload, createdAt }: Props) {
         createdAt={createdAt}
         body={
           <>
-            {obj.note ? <p>{obj.note}</p> : null}
+            {obj.note ? (
+              <div className="prose-review text-sm">
+                <ReactMarkdown>{obj.note}</ReactMarkdown>
+              </div>
+            ) : null}
             {obj.previousStatus ? (
               <p className="mt-1 text-xs text-muted">
                 {t("previousStatus")}: {obj.previousStatus}
@@ -156,12 +170,13 @@ function FindingItem({
   index: number;
 }) {
   const t = useTranslations("events");
-  const [open, setOpen] = useState(index < 2);
   const title =
     finding.title ||
     finding.message ||
     t("findingFallback", { n: index + 1 });
-  const hasDetails = Boolean(finding.description || finding.message);
+  const detailMarkdown =
+    finding.description ||
+    (finding.message && finding.message !== title ? finding.message : null);
 
   return (
     <li className="px-4 py-3">
@@ -177,27 +192,12 @@ function FindingItem({
             </p>
           ) : null}
         </div>
-        {hasDetails ? (
-          <button
-            type="button"
-            className="shrink-0 rounded border border-border px-2 py-1 text-xs text-muted hover:bg-background"
-            onClick={() => setOpen((v) => !v)}
-          >
-            {open ? t("hideDetails") : t("showDetails")}
-          </button>
-        ) : null}
       </div>
 
-      {open && finding.description ? (
+      {detailMarkdown ? (
         <div className="prose-review mt-3 rounded-md border border-border bg-background p-3 text-sm">
-          <ReactMarkdown>{finding.description}</ReactMarkdown>
+          <ReactMarkdown>{detailMarkdown}</ReactMarkdown>
         </div>
-      ) : null}
-
-      {open && !finding.description && finding.message ? (
-        <p className="mt-2 whitespace-pre-wrap text-sm text-muted">
-          {finding.message}
-        </p>
       ) : null}
     </li>
   );
