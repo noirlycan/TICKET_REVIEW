@@ -130,3 +130,11 @@ export function formatReviewForCopy(
 
   return lines.join("\n").trim() + "\n";
 }
+
+export const SEVERITY_ORDER = [
+  "critical",
+  "high",
+  "medium",
+  "low",
+  "info",
+] as const;
