@@ -39,6 +39,8 @@
     "submitComment": "Gửi bình luận",
     "timeline": "Timeline",
     "allowApprove": "Cho phép approve",
+    "allowApproveWithoutReview": "Approve không cần review",
+    "skipReviewBadge": "Bỏ qua review",
     "cancel": "Huỷ task",
     "back": "Quay lại danh sách",
     "createdBy": "Tạo bởi",

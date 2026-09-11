@@ -26,6 +26,7 @@ export function serializeTask(
     projectId: string | null;
     status: string;
     allowApprove: boolean;
+    skipReview: boolean;
     createdAt: Date;
     updatedAt: Date;
     comments?: Array<{
@@ -52,6 +53,16 @@ export function serializeTask(
     projectId: task.projectId,
     status: task.status,
     allowApprove: task.allowApprove,
+    skipReview: task.skipReview,
+    /** Hint for review bots: what to do next */
+    action:
+      task.status === "allow_approve"
+        ? task.skipReview
+          ? "approve_without_review"
+          : "approve_after_review"
+        : task.status === "pending" || task.status === "needs_revision"
+          ? "review"
+          : null,
     createdAt: task.createdAt.toISOString(),
     updatedAt: task.updatedAt.toISOString(),
   };

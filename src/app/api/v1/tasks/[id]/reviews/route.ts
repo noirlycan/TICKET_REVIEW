@@ -57,7 +57,7 @@ export async function POST(request: Request, context: Ctx) {
     });
     return tx.task.update({
       where: { id },
-      data: { status: "reviewed", allowApprove: false },
+      data: { status: "reviewed", allowApprove: false, skipReview: false },
     });
   });
 

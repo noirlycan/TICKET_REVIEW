@@ -88,6 +88,28 @@ curl -s -H "X-API-Key: YOUR_KEY" \
   "https://<your-domain>/api/v1/tasks?status=pending,needs_revision,allow_approve"
 ```
 
+Each task includes:
+
+| Field | Meaning |
+|-------|---------|
+| `status` | Current status |
+| `allowApprove` | Human allowed MR approval |
+| `skipReview` | `true` if human chose **Approve without review** |
+| `action` | Bot hint: `review` \| `approve_after_review` \| `approve_without_review` \| `null` |
+
+Example `allow_approve` item when skipping review:
+
+```json
+{
+  "id": "...",
+  "status": "allow_approve",
+  "allowApprove": true,
+  "skipReview": true,
+  "action": "approve_without_review",
+  "mrUrl": "https://..."
+}
+```
+
 ### Get task detail (comments + events)
 
 ```bash
@@ -113,6 +135,8 @@ curl -s -X POST -H "X-API-Key: YOUR_KEY" \
 
 ### Mark approved (only when status is `allow_approve`)
 
+Works for both normal approve-after-review and **approve without review** (`skipReview: true`).
+
 ```bash
 curl -s -X POST -H "X-API-Key: YOUR_KEY" \
   -H "Content-Type: application/json" \
@@ -122,9 +146,13 @@ curl -s -X POST -H "X-API-Key: YOUR_KEY" \
 
 ## Suggested review-system loop
 
-1. `GET /tasks?status=pending,needs_revision` → claim each → run review → `POST .../reviews`
-2. `GET /tasks?status=allow_approve` → approve MR externally → `POST .../approved`
-3. Poll periodically; on `needs_revision`, re-read comments from `GET /tasks/:id` and scan again
+1. `GET /tasks?status=pending,needs_revision` → claim → review → `POST .../reviews`  
+   (skip tasks that already moved to `allow_approve`)
+2. `GET /tasks?status=allow_approve`:
+   - if `skipReview` / `action=approve_without_review` → approve MR immediately (no scan)
+   - else → approve after human accepted the review result
+   - then `POST .../approved`
+3. On `needs_revision`, re-read comments from `GET /tasks/:id` and scan again
 
 ## Task statuses
 
@@ -134,6 +162,6 @@ curl -s -X POST -H "X-API-Key: YOUR_KEY" \
 | `in_review` | Claimed by review system |
 | `reviewed` | Result posted; waiting for human |
 | `needs_revision` | Human commented; re-scan needed |
-| `allow_approve` | Human allowed approval |
+| `allow_approve` | Human allowed approval (`skipReview` may be true) |
 | `approved` | Review system confirmed approval |
 | `cancelled` | Cancelled by human |

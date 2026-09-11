@@ -39,6 +39,8 @@
     "submitComment": "Post comment",
     "timeline": "Timeline",
     "allowApprove": "Allow approve",
+    "allowApproveWithoutReview": "Approve without review",
+    "skipReviewBadge": "Skip review",
     "cancel": "Cancel task",
     "back": "Back to tasks",
     "createdBy": "Created by",

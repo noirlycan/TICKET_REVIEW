@@ -8,6 +8,7 @@ import { CommentBody } from "@/components/CommentBody";
 import {
   addComment,
   allowApprove,
+  allowApproveWithoutReview,
   cancelTask,
 } from "@/app/actions/tasks";
 
@@ -34,6 +35,12 @@ export default async function TaskDetailPage({ params }: Props) {
   if (!task) notFound();
 
   const canAllow = task.status === "reviewed";
+  const canSkipReview = [
+    "pending",
+    "in_review",
+    "needs_revision",
+    "reviewed",
+  ].includes(task.status);
   const canComment =
     task.status !== "cancelled" && task.status !== "approved";
   const canCancel =
@@ -48,7 +55,14 @@ export default async function TaskDetailPage({ params }: Props) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold">{task.title}</h1>
-          <StatusBadge status={task.status} />
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusBadge status={task.status} />
+            {task.skipReview && task.status === "allow_approve" ? (
+              <span className="rounded border border-warning bg-amber-50 px-2 py-0.5 text-xs font-medium text-warning">
+                {t("skipReviewBadge")}
+              </span>
+            ) : null}
+          </div>
           <p className="text-sm text-muted">
             {t("createdBy")}: {task.createdBy.username}
           </p>
@@ -61,6 +75,16 @@ export default async function TaskDetailPage({ params }: Props) {
                 className="rounded bg-accent px-3 py-2 text-sm text-white hover:bg-accent-hover"
               >
                 {t("allowApprove")}
+              </button>
+            </form>
+          ) : null}
+          {canSkipReview ? (
+            <form action={allowApproveWithoutReview.bind(null, task.id)}>
+              <button
+                type="submit"
+                className="rounded border border-warning bg-amber-50 px-3 py-2 text-sm text-warning hover:bg-amber-100"
+              >
+                {t("allowApproveWithoutReview")}
               </button>
             </form>
           ) : null}

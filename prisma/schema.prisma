@@ -54,6 +54,7 @@ model Task {
   projectId    String?
   status       TaskStatus     @default(pending)
   allowApprove Boolean        @default(false)
+  skipReview   Boolean        @default(false)
   createdById  String
   createdBy    User           @relation(fields: [createdById], references: [id])
   createdAt    DateTime       @default(now())

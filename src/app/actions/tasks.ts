@@ -64,6 +64,7 @@ export async function addComment(taskId: string, formData: FormData) {
             ? "needs_revision"
             : task.status,
         allowApprove: false,
+        skipReview: false,
       },
     }),
     prisma.reviewEvent.create({
@@ -93,14 +94,66 @@ export async function allowApprove(taskId: string) {
   await prisma.$transaction([
     prisma.task.update({
       where: { id: taskId },
-      data: { status: "allow_approve", allowApprove: true },
+      data: {
+        status: "allow_approve",
+        allowApprove: true,
+        skipReview: false,
+      },
     }),
     prisma.reviewEvent.create({
       data: {
         taskId,
         type: "status_note",
         payload: JSON.stringify({
-          note: "User allowed approve",
+          note: "User allowed approve after review",
+          skipReview: false,
+          by: user.id,
+        }),
+      },
+    }),
+  ]);
+
+  const locale = await getLocale();
+  revalidatePath(`/${locale}/tasks/${taskId}`);
+  revalidatePath(`/${locale}/tasks`);
+}
+
+const SKIP_REVIEW_STATUSES = [
+  "pending",
+  "in_review",
+  "needs_revision",
+  "reviewed",
+] as const;
+
+export async function allowApproveWithoutReview(taskId: string) {
+  const user = await requireUser();
+  const task = await prisma.task.findUnique({ where: { id: taskId } });
+  if (
+    !task ||
+    !SKIP_REVIEW_STATUSES.includes(
+      task.status as (typeof SKIP_REVIEW_STATUSES)[number],
+    )
+  ) {
+    throw new Error("Cannot skip review for this task status");
+  }
+
+  await prisma.$transaction([
+    prisma.task.update({
+      where: { id: taskId },
+      data: {
+        status: "allow_approve",
+        allowApprove: true,
+        skipReview: true,
+      },
+    }),
+    prisma.reviewEvent.create({
+      data: {
+        taskId,
+        type: "status_note",
+        payload: JSON.stringify({
+          note: "User allowed approve without review",
+          skipReview: true,
+          previousStatus: task.status,
           by: user.id,
         }),
       },
@@ -122,7 +175,7 @@ export async function cancelTask(taskId: string) {
   await prisma.$transaction([
     prisma.task.update({
       where: { id: taskId },
-      data: { status: "cancelled", allowApprove: false },
+      data: { status: "cancelled", allowApprove: false, skipReview: false },
     }),
     prisma.reviewEvent.create({
       data: {
