@@ -21,21 +21,42 @@ export async function createTask(formData: FormData) {
   const mrUrl = String(formData.get("mrUrl") || "").trim();
   const mrIid = String(formData.get("mrIid") || "").trim();
   const projectId = String(formData.get("projectId") || "").trim();
+  const skipReview = formData.get("skipReview") === "on";
 
   if (!title || !mrUrl) {
     throw new Error("Title and MR URL are required");
   }
 
-  const task = await prisma.task.create({
-    data: {
-      title,
-      description: description || null,
-      mrUrl,
-      mrIid: mrIid || null,
-      projectId: projectId || null,
-      createdById: user.id,
-      status: "pending",
-    },
+  const task = await prisma.$transaction(async (tx) => {
+    const created = await tx.task.create({
+      data: {
+        title,
+        description: description || null,
+        mrUrl,
+        mrIid: mrIid || null,
+        projectId: projectId || null,
+        createdById: user.id,
+        status: skipReview ? "allow_approve" : "pending",
+        allowApprove: skipReview,
+        skipReview,
+      },
+    });
+
+    if (skipReview) {
+      await tx.reviewEvent.create({
+        data: {
+          taskId: created.id,
+          type: "status_note",
+          payload: JSON.stringify({
+            note: "Created with approve without review",
+            skipReview: true,
+            by: user.id,
+          }),
+        },
+      });
+    }
+
+    return created;
   });
 
   const locale = await getLocale();

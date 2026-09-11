@@ -31,6 +31,8 @@
     "fieldMrUrl": "MR URL",
     "fieldMrIid": "MR IID (optional)",
     "fieldProjectId": "Project ID (optional)",
+    "fieldSkipReview": "Approve MR without review",
+    "fieldSkipReviewHelp": "Task goes straight to allow_approve. Review bot will approve the MR and skip scanning.",
     "submitCreate": "Create",
     "detail": "Task detail",
     "comments": "Comments",

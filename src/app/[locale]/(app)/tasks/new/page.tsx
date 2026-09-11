@@ -52,6 +52,21 @@ export default async function NewTaskPage() {
             className="w-full rounded border border-border px-3 py-2"
           />
         </label>
+        <label className="flex cursor-pointer items-start gap-2 rounded border border-warning bg-amber-50 px-3 py-3 text-sm">
+          <input
+            type="checkbox"
+            name="skipReview"
+            className="mt-0.5"
+          />
+          <span>
+            <span className="font-medium text-warning">
+              {t("fieldSkipReview")}
+            </span>
+            <span className="mt-0.5 block text-xs text-muted">
+              {t("fieldSkipReviewHelp")}
+            </span>
+          </span>
+        </label>
         <button
           type="submit"
           className="rounded bg-accent px-3 py-2 text-sm text-white hover:bg-accent-hover"

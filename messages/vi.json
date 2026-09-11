@@ -31,6 +31,8 @@
     "fieldMrUrl": "URL MR",
     "fieldMrIid": "MR IID (tuỳ chọn)",
     "fieldProjectId": "Project ID (tuỳ chọn)",
+    "fieldSkipReview": "Approve MR luôn, không cần review",
+    "fieldSkipReviewHelp": "Task vào thẳng allow_approve. Hệ thống review sẽ approve MR, bỏ qua bước scan.",
     "submitCreate": "Tạo",
     "detail": "Chi tiết task",
     "comments": "Bình luận",
