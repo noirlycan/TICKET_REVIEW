@@ -12,6 +12,7 @@ import {
   cancelTask,
 } from "@/app/actions/tasks";
 import { DeleteTaskButton } from "@/components/DeleteTaskButton";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -46,12 +47,16 @@ export default async function TaskDetailPage({ params }: Props) {
     task.status !== "cancelled" && task.status !== "approved";
   const canCancel =
     task.status !== "cancelled" && task.status !== "approved";
+  const autoRefreshActive = !["approved", "cancelled"].includes(task.status);
 
   return (
     <div className="space-y-6">
-      <Link href="/tasks" className="text-sm text-muted hover:underline">
-        {t("back")}
-      </Link>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link href="/tasks" className="text-sm text-muted hover:underline">
+          {t("back")}
+        </Link>
+        <AutoRefresh enabledWhen={autoRefreshActive} />
+      </div>
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">

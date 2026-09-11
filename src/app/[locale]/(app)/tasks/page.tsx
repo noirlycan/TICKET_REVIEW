@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { prisma } from "@/lib/db";
 import { StatusBadge } from "@/components/StatusBadge";
+import { AutoRefresh } from "@/components/AutoRefresh";
 import { TaskStatus } from "@prisma/client";
 import { TASK_STATUSES } from "@/lib/task-status";
 
@@ -26,12 +27,15 @@ export default async function TasksPage({ searchParams }: Props) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
-        <Link
-          href="/tasks/new"
-          className="rounded bg-accent px-3 py-2 text-sm text-white hover:bg-accent-hover"
-        >
-          {t("new")}
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <AutoRefresh />
+          <Link
+            href="/tasks/new"
+            className="rounded bg-accent px-3 py-2 text-sm text-white hover:bg-accent-hover"
+          >
+            {t("new")}
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2 text-sm">
