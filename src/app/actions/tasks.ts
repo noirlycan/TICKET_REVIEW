@@ -190,3 +190,17 @@ export async function cancelTask(taskId: string) {
   revalidatePath(`/${locale}/tasks/${taskId}`);
   revalidatePath(`/${locale}/tasks`);
 }
+
+export async function deleteTask(taskId: string) {
+  await requireUser();
+  const task = await prisma.task.findUnique({ where: { id: taskId } });
+  if (!task) {
+    throw new Error("Task not found");
+  }
+
+  await prisma.task.delete({ where: { id: taskId } });
+
+  const locale = await getLocale();
+  revalidatePath(`/${locale}/tasks`);
+  redirect({ href: "/tasks", locale });
+}

@@ -11,6 +11,7 @@ import {
   allowApproveWithoutReview,
   cancelTask,
 } from "@/app/actions/tasks";
+import { DeleteTaskButton } from "@/components/DeleteTaskButton";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -98,6 +99,7 @@ export default async function TaskDetailPage({ params }: Props) {
               </button>
             </form>
           ) : null}
+          <DeleteTaskButton taskId={task.id} />
         </div>
       </div>
 
